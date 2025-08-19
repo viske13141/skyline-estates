@@ -2,7 +2,7 @@ import { Home, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } fro
 
 export const Footer = () => {
   return (
-    <footer className="bg-card border-t border-glass-border/30 py-16 px-6">
+    <footer className="bg-card border-t border-glass-border/30 py-16 px-6 mt-auto">
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}

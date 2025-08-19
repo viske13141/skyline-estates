@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Bed, Bath, Square, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const properties = [
   {
@@ -51,6 +52,17 @@ const properties = [
 ];
 
 export const FeaturedProperties = () => {
+  const navigate = useNavigate();
+
+  const handlePropertyClick = (propertyId: number) => {
+    navigate(`/property/${propertyId}`);
+  };
+
+  const handleViewDetails = (e: React.MouseEvent, propertyId: number) => {
+    e.stopPropagation();
+    navigate(`/property/${propertyId}`);
+  };
+
   return (
     <section id="properties" className="py-20 px-6 bg-muted/30">
       <div className="container mx-auto max-w-7xl">
@@ -67,8 +79,9 @@ export const FeaturedProperties = () => {
           {properties.map((property, index) => (
             <Card 
               key={property.id}
-              className="group glass-card border-glass-border/50 overflow-hidden hover-glow"
+              className="group glass-card border-glass-border/50 overflow-hidden hover-glow cursor-pointer"
               style={{ animationDelay: `${index * 150}ms` }}
+              onClick={() => handlePropertyClick(property.id)}
             >
               <div className="relative overflow-hidden">
                 <img 
@@ -122,10 +135,20 @@ export const FeaturedProperties = () => {
                 </div>
                 
                 <div className="flex gap-3">
-                  <Button className="flex-1 bg-gradient-primary hover:opacity-90">
+                  <Button 
+                    className="flex-1 bg-gradient-primary hover:opacity-90"
+                    onClick={(e) => handleViewDetails(e, property.id)}
+                  >
                     View Details
                   </Button>
-                  <Button variant="outline" className="glass-button">
+                  <Button 
+                    variant="outline" 
+                    className="glass-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/property/${property.id}`);
+                    }}
+                  >
                     Schedule Visit
                   </Button>
                 </div>
