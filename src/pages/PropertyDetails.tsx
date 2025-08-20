@@ -1,24 +1,19 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { PropertyHero } from "@/components/PropertyHero";
+import { PropertySidebar } from "@/components/PropertySidebar";
+import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { 
-  ArrowLeft, 
+  ArrowLeft,
   MapPin, 
-  Bed, 
-  Bath, 
-  Square, 
-  Calendar,
-  Share2,
-  Heart,
   Car,
   Wifi,
   Dumbbell,
   Shield
 } from "lucide-react";
-import { useState } from "react";
 
 // Extended property data - in a real app this would come from an API
 const propertyData = {
@@ -103,8 +98,6 @@ const propertyData = {
 const PropertyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [currentImage, setCurrentImage] = useState(0);
-  const [show360View, setShow360View] = useState(false);
 
   const property = propertyData[parseInt(id!) as keyof typeof propertyData];
 
@@ -140,174 +133,98 @@ const PropertyDetails = () => {
       
       <main className="pt-20 pb-8">
         <div className="container mx-auto px-6 max-w-7xl">
-          {/* Back Button */}
-          <div className="mb-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate(-1)}
-              className="glass-button"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Properties
-            </Button>
-          </div>
+          {/* Hero Section */}
+          <PropertyHero
+            title={property.title}
+            type={property.type}
+            images={property.images}
+            onBack={() => navigate(-1)}
+            onShare={() => console.log('Share property')}
+            onFavorite={() => console.log('Add to favorites')}
+          />
 
-          {/* Property Header */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-            {/* Image Gallery */}
-            <div className="space-y-4">
-              <Card className="glass-card overflow-hidden">
-                <div className="relative">
-                  <img 
-                    src={property.images[currentImage]}
-                    alt={property.title}
-                    className="w-full h-96 object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-gradient-primary text-primary-foreground">
-                      {property.type}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      className="glass-button"
-                      onClick={() => setShow360View(!show360View)}
-                    >
-                      360° View
-                    </Button>
-                    <Button size="sm" variant="outline" className="glass-button">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline" className="glass-button">
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-              
-              {/* Thumbnail Gallery */}
-              <div className="grid grid-cols-4 gap-2">
-                {property.images.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`${property.title} ${index + 1}`}
-                    className={`w-full h-20 object-cover rounded-lg cursor-pointer transition-all hover:opacity-80 ${
-                      currentImage === index ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => setCurrentImage(index)}
-                  />
-                ))}
-              </div>
-
-              {/* 360° View */}
-              {show360View && (
-                <Card className="glass-card p-6">
-                  <div className="aspect-video rounded-lg overflow-hidden">
-                    <iframe
-                      src={property.streetViewUrl}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      loading="lazy"
-                      title="360° Street View"
-                    />
-                  </div>
-                </Card>
-              )}
-            </div>
-
-            {/* Property Info */}
-            <div className="space-y-8">
-              <div>
-                <h1 className="text-4xl font-bold mb-4 gradient-text">
-                  {property.title}
-                </h1>
-                <p className="text-muted-foreground flex items-center text-lg mb-6">
-                  <MapPin className="mr-2 h-5 w-5" />
-                  {property.location}
-                </p>
-                <p className="text-5xl font-bold gradient-text mb-6">
-                  {property.price}
-                </p>
-              </div>
-
-              {/* Property Stats */}
+          {/* Main Content with Sidebar */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Property Description */}
               <Card className="glass-card">
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-3 gap-6 text-center">
-                    <div>
-                      <Bed className="h-8 w-8 mx-auto mb-2 text-primary" />
-                      <p className="text-2xl font-bold">{property.beds}</p>
-                      <p className="text-muted-foreground">Bedrooms</p>
+                <CardContent className="p-8">
+                  <h2 className="text-3xl font-bold mb-6 gradient-text">About This Property</h2>
+                  <p className="text-muted-foreground leading-relaxed text-lg mb-8">
+                    {property.description}
+                  </p>
+                  
+                  {/* Features Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold">Features</h3>
+                      <ul className="space-y-2 text-muted-foreground">
+                        <li>• Premium flooring throughout</li>
+                        <li>• Modern kitchen with island</li>
+                        <li>• Walk-in closets</li>
+                        <li>• Smart home integration</li>
+                      </ul>
                     </div>
-                    <div>
-                      <Bath className="h-8 w-8 mx-auto mb-2 text-primary" />
-                      <p className="text-2xl font-bold">{property.baths}</p>
-                      <p className="text-muted-foreground">Bathrooms</p>
-                    </div>
-                    <div>
-                      <Square className="h-8 w-8 mx-auto mb-2 text-primary" />
-                      <p className="text-2xl font-bold">{property.area}</p>
-                      <p className="text-muted-foreground">Area</p>
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold">Nearby</h3>
+                      <ul className="space-y-2 text-muted-foreground">
+                        <li>• Shopping mall - 2 km</li>
+                        <li>• Metro station - 1.5 km</li>
+                        <li>• International airport - 15 km</li>
+                        <li>• Tech parks - 5 km</li>
+                      </ul>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Action Buttons */}
-              <div className="space-y-4">
-                <Button 
-                  size="lg" 
-                  className="w-full bg-gradient-primary hover:opacity-90 text-lg py-6"
-                >
-                  <Calendar className="mr-2 h-5 w-5" />
-                  Schedule Visit
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="w-full glass-button text-lg py-6"
-                >
-                  Contact Agent
-                </Button>
-              </div>
+              {/* Amenities */}
+              <Card className="glass-card">
+                <CardContent className="p-8">
+                  <h2 className="text-3xl font-bold mb-6 gradient-text">Amenities</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    {property.amenities.map((amenity, index) => (
+                      <div key={index} className="flex items-center space-x-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                        {getAmenityIcon(amenity)}
+                        <span className="text-foreground font-medium">{amenity}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Location Map */}
+              <Card className="glass-card">
+                <CardContent className="p-8">
+                  <h2 className="text-3xl font-bold mb-6 gradient-text">Location</h2>
+                  <div className="aspect-video rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
+                    <p className="text-muted-foreground">Interactive map will be embedded here</p>
+                  </div>
+                  <div className="mt-4 flex items-center text-muted-foreground">
+                    <MapPin className="mr-2 h-5 w-5" />
+                    <span>{property.location}</span>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </div>
 
-          {/* Property Description & Amenities */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Description */}
-            <Card className="glass-card">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-bold mb-6">About This Property</h2>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  {property.description}
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Amenities */}
-            <Card className="glass-card">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-bold mb-6">Amenities</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {property.amenities.map((amenity, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      {getAmenityIcon(amenity)}
-                      <span className="text-muted-foreground">{amenity}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <PropertySidebar
+                title={property.title}
+                location={property.location}
+                price={property.price}
+                beds={property.beds}
+                baths={property.baths}
+                area={property.area}
+              />
+            </div>
           </div>
         </div>
       </main>
 
+      <FloatingActionButton />
       <Footer />
     </div>
   );
