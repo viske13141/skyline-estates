@@ -172,3 +172,5 @@ export const AnimatedStats = () => {
     </section>
   );
 };
+
+export default AnimatedStats;
